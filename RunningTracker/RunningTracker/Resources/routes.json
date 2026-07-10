@@ -1,0 +1,40 @@
+{
+  "routes": [
+    {
+      "id": "mohali-long-run",
+      "name": "Mohali Long Run",
+      "targetFinishSeconds": 3600,
+      "distanceMeters": 10000,
+      "waypoints": [
+        { "lat": 30.633297, "lon": 76.76958, "elevation": 0.0 },
+        { "lat": 30.6450, "lon": 76.7800, "elevation": 0.0 },
+        { "lat": 30.6580, "lon": 76.7900, "elevation": 0.0 },
+        { "lat": 30.6700, "lon": 76.8000, "elevation": 0.0 },
+        { "lat": 30.6820, "lon": 76.8100, "elevation": 0.0 }
+      ]
+    },
+    {
+      "id": "sector-76-loop",
+      "name": "Sector 76 Loop",
+      "targetFinishSeconds": 1800,
+      "distanceMeters": 5000,
+      "waypoints": [
+        { "lat": 30.633297, "lon": 76.76958, "elevation": 0.0 },
+        { "lat": 30.6400, "lon": 76.7750, "elevation": 0.0 },
+        { "lat": 30.6450, "lon": 76.7700, "elevation": 0.0 },
+        { "lat": 30.6380, "lon": 76.7650, "elevation": 0.0 }
+      ]
+    },
+    {
+      "id": "baqarpur-short-run",
+      "name": "Baqarpur Short Run",
+      "targetFinishSeconds": 900,
+      "distanceMeters": 3000,
+      "waypoints": [
+        { "lat": 30.633297, "lon": 76.76958, "elevation": 0.0 },
+        { "lat": 30.6380, "lon": 76.7720, "elevation": 0.0 },
+        { "lat": 30.6350, "lon": 76.7740, "elevation": 0.0 }
+      ]
+    }
+  ]
+}
