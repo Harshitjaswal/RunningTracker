@@ -11,6 +11,15 @@ struct RouteListView: View {
     @State private var routes: [Route] = []
     @State private var loadError: String?
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @AppStorage("selectedColorScheme") private var selectedColorScheme: String = "system"
+
+    private var colorScheme: ColorScheme? {
+        switch selectedColorScheme {
+        case "light": return .light
+        case "dark": return .dark
+        default: return nil
+        }
+    }
     
     // Grid columns for iPad
     private var gridColumns: [GridItem] {
@@ -78,6 +87,30 @@ struct RouteListView: View {
             }
             .navigationTitle("Routes")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Button {
+                            selectedColorScheme = "system"
+                        } label: {
+                            Label("System", systemImage: selectedColorScheme == "system" ? "checkmark" : "")
+                        }
+
+                        Button {
+                            selectedColorScheme = "light"
+                        } label: {
+                            Label("Light", systemImage: selectedColorScheme == "light" ? "checkmark" : "sun.max")
+                        }
+
+                        Button {
+                            selectedColorScheme = "dark"
+                        } label: {
+                            Label("Dark", systemImage: selectedColorScheme == "dark" ? "checkmark" : "moon")
+                        }
+                    } label: {
+                        Image(systemName: selectedColorScheme == "light" ? "sun.max" : selectedColorScheme == "dark" ? "moon.fill" : "circle.lefthalf.filled")
+                    }
+                }
+
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("🧮 Route Projector Tests") {
@@ -94,6 +127,7 @@ struct RouteListView: View {
                     }
                 }
             }
+            .preferredColorScheme(colorScheme)
         }
         .onAppear {
             if routes.isEmpty && loadError == nil {
