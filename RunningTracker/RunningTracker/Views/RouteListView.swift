@@ -15,9 +15,9 @@ struct RouteListView: View {
     // Grid columns for iPad
     private var gridColumns: [GridItem] {
         if horizontalSizeClass == .regular {
-            // iPad: 2-3 columns depending on size
+            // iPad: larger cards with better spacing
             return [
-                GridItem(.adaptive(minimum: 300, maximum: 400), spacing: 16)
+                GridItem(.adaptive(minimum: 400, maximum: 600), spacing: 24)
             ]
         } else {
             // iPhone: single column
@@ -45,15 +45,34 @@ struct RouteListView: View {
                 } else {
                     // Routes grid/list
                     ScrollView {
-                        LazyVGrid(columns: gridColumns, spacing: 16) {
-                            ForEach(routes) { route in
-                                NavigationLink(destination: ActiveRunView(route: route)) {
-                                    RouteCard(route: route)
-                                }
-                                .buttonStyle(.plain)
+                        VStack(spacing: 0) {
+                            // Hero header
+                            VStack(spacing: 8) {
+                                Text("🏃")
+                                    .font(.system(size: horizontalSizeClass == .regular ? 80 : 60))
+                                Text("Choose Your Route")
+                                    .font(horizontalSizeClass == .regular ? .largeTitle : .title)
+                                    .fontWeight(.bold)
+                                Text("\(routes.count) routes available")
+                                    .font(horizontalSizeClass == .regular ? .title3 : .subheadline)
+                                    .foregroundStyle(.secondary)
                             }
+                            .padding(.top, horizontalSizeClass == .regular ? 40 : 24)
+                            .padding(.bottom, horizontalSizeClass == .regular ? 32 : 20)
+
+                            LazyVGrid(columns: gridColumns, spacing: horizontalSizeClass == .regular ? 24 : 16) {
+                                ForEach(routes) { route in
+                                    NavigationLink(destination: ActiveRunView(route: route)) {
+                                        RouteCard(route: route)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            .padding(.horizontal, horizontalSizeClass == .regular ? 40 : 20)
+                            .padding(.bottom, 32)
                         }
-                        .padding()
+                        .frame(maxWidth: horizontalSizeClass == .regular ? 1200 : .infinity)
+                        .frame(maxWidth: .infinity)
                     }
                 }
             }
@@ -96,56 +115,84 @@ struct RouteListView: View {
 struct RouteCard: View {
     let route: Route
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    
+
+    private var isIPad: Bool {
+        horizontalSizeClass == .regular
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Route name
-            Text(route.name)
-                .font(.title3.bold())
-                .foregroundStyle(.primary)
-            
+        VStack(alignment: .leading, spacing: isIPad ? 20 : 16) {
+            // Route name with icon
+            HStack(spacing: 12) {
+                Image(systemName: "figure.run")
+                    .font(.system(size: isIPad ? 32 : 24))
+                    .foregroundStyle(.blue.gradient)
+                    .frame(width: isIPad ? 50 : 40, height: isIPad ? 50 : 40)
+                    .background(.blue.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(route.name)
+                        .font(isIPad ? .title2.bold() : .title3.bold())
+                        .foregroundStyle(.primary)
+                    Text("Tap to start tracking")
+                        .font(isIPad ? .subheadline : .caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Divider()
+
             // Stats grid
-            if horizontalSizeClass == .regular {
-                // iPad: horizontal layout
-                HStack(spacing: 24) {
+            if isIPad {
+                // iPad: horizontal layout with more spacing
+                HStack(spacing: 32) {
                     statItem(icon: "map", label: "Distance", value: route.formattedDistance)
                     statItem(icon: "clock", label: "Target", value: route.formattedTargetTime)
-                    statItem(icon: "location", label: "Points", value: "\(route.waypoints.count)")
+                    statItem(icon: "mappin.and.ellipse", label: "Waypoints", value: "\(route.waypoints.count)")
                 }
             } else {
                 // iPhone: vertical layout
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 10) {
                     statRow(icon: "map", value: route.formattedDistance)
                     statRow(icon: "clock", value: route.formattedTargetTime)
-                    statRow(icon: "location", value: "\(route.waypoints.count) waypoints")
+                    statRow(icon: "mappin.and.ellipse", value: "\(route.waypoints.count) waypoints")
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
+        .padding(isIPad ? 28 : 20)
         .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: isIPad ? 20 : 16))
+        .shadow(color: .black.opacity(0.08), radius: isIPad ? 12 : 8, x: 0, y: isIPad ? 4 : 2)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: isIPad ? 20 : 16)
                 .stroke(.quaternary, lineWidth: 1)
         )
     }
     
     private func statItem(icon: String, label: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             Label(label, systemImage: icon)
-                .font(.caption)
+                .font(isIPad ? .body : .caption)
                 .foregroundStyle(.secondary)
             Text(value)
-                .font(.subheadline.bold())
+                .font(isIPad ? .title3.bold() : .subheadline.bold())
                 .foregroundStyle(.primary)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     private func statRow(icon: String, value: String) -> some View {
-        Label(value, systemImage: icon)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.body)
+                .foregroundStyle(.blue)
+                .frame(width: 24)
+            Text(value)
+                .font(.body)
+                .foregroundStyle(.primary)
+        }
     }
 }
 

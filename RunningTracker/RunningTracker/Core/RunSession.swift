@@ -114,6 +114,11 @@ final class RunSession: ObservableObject {
         footPoint = projection.footPoint
         isOffRoute = projection.isOffRoute
 
+        // Downgrade trust state to degraded if off-route
+        if projection.isOffRoute && trustState == .trusted {
+            trustState = .degraded
+        }
+
         // Update next waypoint info
         let nextWaypointIndex = projection.currentWaypointIndex + 1
         if nextWaypointIndex < route.waypoints.count {
@@ -126,14 +131,18 @@ final class RunSession: ObservableObject {
             waypointProgress = 1.0
         }
 
-        // 3. Update ETA (use distance to next waypoint instead of full route)
-        await etaEngine.update(
-            fix: validLoc,
-            distanceRemaining: projection.distanceToNextWaypoint,
-            targetFinishSeconds: route.targetFinishSeconds
-        )
-        
-        eta = await etaEngine.result
+        // 3. Update ETA (use total remaining distance to finish, not just to next waypoint)
+        // Only update ETA if not significantly off-route (freeze ETA when off-route)
+        if !projection.isOffRoute {
+            await etaEngine.update(
+                fix: validLoc,
+                distanceRemaining: projection.distanceRemaining,
+                targetFinishSeconds: route.targetFinishSeconds
+            )
+
+            eta = await etaEngine.result
+        }
+        // If off-route, keep last known ETA frozen
         
         // 4. Update breadcrumb trail (decimated)
         updateBreadcrumb(validLoc.coordinate)
