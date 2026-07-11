@@ -24,6 +24,9 @@ final class RunSession: ObservableObject {
     @Published var footPoint: CLLocationCoordinate2D?
     @Published var isOffRoute: Bool = false
     @Published var isFinished: Bool = false
+    @Published var nextWaypoint: Waypoint?
+    @Published var distanceToNextWaypoint: Double = 0.0
+    @Published var waypointProgress: Double = 0.0
     
     // MARK: - Private State
     
@@ -47,8 +50,8 @@ final class RunSession: ObservableObject {
         self.provider = provider
         self.distanceRemaining = route.distanceMeters
         
-        // Initialize remaining coordinates with full route
-        self.remainingCoordinates = route.coordinates
+        // Initialize remaining coordinates with full densified route for smooth map display
+        self.remainingCoordinates = route.densifiedCoordinates
     }
     
     // MARK: - Public API
@@ -110,11 +113,23 @@ final class RunSession: ObservableObject {
         distanceRemaining = projection.distanceRemaining
         footPoint = projection.footPoint
         isOffRoute = projection.isOffRoute
-        
-        // 3. Update ETA
+
+        // Update next waypoint info
+        let nextWaypointIndex = projection.currentWaypointIndex + 1
+        if nextWaypointIndex < route.waypoints.count {
+            nextWaypoint = route.waypoints[nextWaypointIndex]
+            distanceToNextWaypoint = projection.distanceToNextWaypoint
+            waypointProgress = projection.waypointProgress
+        } else {
+            nextWaypoint = nil
+            distanceToNextWaypoint = 0.0
+            waypointProgress = 1.0
+        }
+
+        // 3. Update ETA (use distance to next waypoint instead of full route)
         await etaEngine.update(
             fix: validLoc,
-            distanceRemaining: projection.distanceRemaining,
+            distanceRemaining: projection.distanceToNextWaypoint,
             targetFinishSeconds: route.targetFinishSeconds
         )
         
@@ -153,7 +168,8 @@ final class RunSession: ObservableObject {
     
     private func updateRouteSplit(projection: RouteProjector.ProjectionResult) {
         // Split route into covered (up to foot point) and remaining (after foot point)
-        let allCoordinates = route.coordinates
+        // Use densified coordinates for smooth map display
+        let allCoordinates = route.densifiedCoordinates
         
         // Find which segment the foot point is on
         var coveredRoute: [CLLocationCoordinate2D] = []

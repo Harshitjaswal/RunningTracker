@@ -18,14 +18,20 @@ actor RouteProjector {
         let crossTrack: Double
         let footPoint: CLLocationCoordinate2D
         let isOffRoute: Bool
-        
+        let currentWaypointIndex: Int
+        let distanceToNextWaypoint: Double
+        let waypointProgress: Double // Progress to next waypoint (0.0 to 1.0)
+
         static var zero: ProjectionResult {
             ProjectionResult(
                 progress: 0.0,
                 distanceRemaining: 0.0,
                 crossTrack: 0.0,
                 footPoint: CLLocationCoordinate2D(latitude: 0, longitude: 0),
-                isOffRoute: false
+                isOffRoute: false,
+                currentWaypointIndex: 0,
+                distanceToNextWaypoint: 0.0,
+                waypointProgress: 0.0
             )
         }
     }
@@ -57,7 +63,10 @@ actor RouteProjector {
                 distanceRemaining: route.distanceMeters,
                 crossTrack: 0.0,
                 footPoint: coordinates[0],
-                isOffRoute: false
+                isOffRoute: false,
+                currentWaypointIndex: 0,
+                distanceToNextWaypoint: route.distanceMeters,
+                waypointProgress: 0.0
             )
         }
         
@@ -85,13 +94,22 @@ actor RouteProjector {
         
         // Determine if off-route
         let isOffRoute = bestProjection.crossTrack > offRouteThreshold
-        
+
+        // Calculate which waypoint segment we're on and distance to next waypoint
+        let (waypointIndex, distanceToNext, segmentProgress) = calculateDistanceToNextWaypoint(
+            coordinates: coordinates,
+            alongTrack: bestProjection.alongTrack
+        )
+
         return ProjectionResult(
             progress: newProgress,
             distanceRemaining: distanceRemaining,
             crossTrack: bestProjection.crossTrack,
             footPoint: bestProjection.footPoint,
-            isOffRoute: isOffRoute
+            isOffRoute: isOffRoute,
+            currentWaypointIndex: waypointIndex,
+            distanceToNextWaypoint: distanceToNext,
+            waypointProgress: segmentProgress
         )
     }
     
@@ -250,11 +268,40 @@ actor RouteProjector {
     /// Calculate total route length
     private func calculateTotalLength(coordinates: [CLLocationCoordinate2D]) -> Double {
         var totalLength = 0.0
-        
+
         for i in 0..<(coordinates.count - 1) {
             totalLength += distance(from: coordinates[i], to: coordinates[i + 1])
         }
-        
+
         return totalLength
+    }
+
+    /// Calculate which waypoint segment we're on, distance to next waypoint, and progress within segment
+    private func calculateDistanceToNextWaypoint(
+        coordinates: [CLLocationCoordinate2D],
+        alongTrack: Double
+    ) -> (waypointIndex: Int, distanceToNext: Double, segmentProgress: Double) {
+        guard coordinates.count >= 2 else {
+            return (0, 0.0, 0.0)
+        }
+
+        var cumulativeDistance: Double = 0.0
+
+        for i in 0..<(coordinates.count - 1) {
+            let segmentLength = distance(from: coordinates[i], to: coordinates[i + 1])
+
+            if cumulativeDistance + segmentLength >= alongTrack {
+                // We're on this segment (from waypoint i to i+1)
+                let distanceIntoSegment = alongTrack - cumulativeDistance
+                let distanceToNextWaypoint = segmentLength - distanceIntoSegment
+                let segmentProgress = segmentLength > 0 ? distanceIntoSegment / segmentLength : 0.0
+                return (i, distanceToNextWaypoint, segmentProgress)
+            }
+
+            cumulativeDistance += segmentLength
+        }
+
+        // Reached the end
+        return (coordinates.count - 2, 0.0, 1.0)
     }
 }

@@ -1,39 +1,46 @@
 {
   "routes": [
     {
-      "id": "mohali-long-run",
-      "name": "Mohali Long Run",
-      "targetFinishSeconds": 3600,
-      "distanceMeters": 10000,
+      "id": "home-to-jay-pee",
+      "name": "Home to Jay Pee",
+      "targetFinishSeconds": 600,
+      "distanceMeters": 2000,
       "waypoints": [
-        { "lat": 30.633297, "lon": 76.76958, "elevation": 0.0 },
-        { "lat": 30.6450, "lon": 76.7800, "elevation": 0.0 },
-        { "lat": 30.6580, "lon": 76.7900, "elevation": 0.0 },
-        { "lat": 30.6700, "lon": 76.8000, "elevation": 0.0 },
-        { "lat": 30.6820, "lon": 76.8100, "elevation": 0.0 }
+        { "lat": 30.633278444416835, "lon": 76.76958577250777, "elevation": 0.0, "name": "Home" },
+        { "lat": 30.63176921249922, "lon": 76.76938503711773, "elevation": 0.0 },
+        { "lat": 30.630321372068437, "lon": 76.77145586183637, "elevation": 0.0 },
+        { "lat": 30.62801015717802, "lon": 76.77603148312053, "elevation": 0.0, "name": "Jay Pee Enterprises" }
       ]
     },
     {
-      "id": "sector-76-loop",
-      "name": "Sector 76 Loop",
+      "id": "jay-pee-to-rudra",
+      "name": "Jay Pee to Rudra School",
+      "targetFinishSeconds": 1200,
+      "distanceMeters": 4000,
+      "waypoints": [
+        { "lat": 30.62801015717802, "lon": 76.77603148312053, "elevation": 0.0, "name": "Jay Pee Enterprises" },
+        { "lat": 30.63153207939876, "lon": 76.76980288102355, "elevation": 0.0 },
+        { "lat": 30.633821527028672, "lon": 76.7666056878607, "elevation": 0.0 },
+        { "lat": 30.63306453824258, "lon": 76.76561863493795, "elevation": 0.0, "name": "Turn Right" },
+        { "lat": 30.63568880463868, "lon": 76.76227844792157, "elevation": 0.0 },
+        { "lat": 30.63663648289464, "lon": 76.76280754761382, "elevation": 0.0, "name": "Turn Left" },
+        { "lat": 30.63950762470619, "lon": 76.75945561577639, "elevation": 0.0, "name": "Rudra School" }
+      ]
+    },
+    {
+      "id": "mcdonalds-to-manav-rachna",
+      "name": "McDonald's to Manav Rachna",
       "targetFinishSeconds": 1800,
-      "distanceMeters": 5000,
+      "distanceMeters": 6000,
       "waypoints": [
-        { "lat": 30.633297, "lon": 76.76958, "elevation": 0.0 },
-        { "lat": 30.6400, "lon": 76.7750, "elevation": 0.0 },
-        { "lat": 30.6450, "lon": 76.7700, "elevation": 0.0 },
-        { "lat": 30.6380, "lon": 76.7650, "elevation": 0.0 }
-      ]
-    },
-    {
-      "id": "baqarpur-short-run",
-      "name": "Baqarpur Short Run",
-      "targetFinishSeconds": 900,
-      "distanceMeters": 3000,
-      "waypoints": [
-        { "lat": 30.633297, "lon": 76.76958, "elevation": 0.0 },
-        { "lat": 30.6380, "lon": 76.7720, "elevation": 0.0 },
-        { "lat": 30.6350, "lon": 76.7740, "elevation": 0.0 }
+        { "lat": 30.632663955186217, "lon": 76.7667028796139, "elevation": 0.0, "name": "McDonald's" },
+        { "lat": 30.633020334761635, "lon": 76.76572879409287, "elevation": 0.0 },
+        { "lat": 30.63272068253268, "lon": 76.76534019038723, "elevation": 0.0, "name": "Turn Left" },
+        { "lat": 30.64154572747629, "lon": 76.75447187945987, "elevation": 0.0 },
+        { "lat": 30.640820371139625, "lon": 76.7502852534744, "elevation": 0.0, "name": "Turn Left" },
+        { "lat": 30.645353376528337, "lon": 76.74558782498546, "elevation": 0.0 },
+        { "lat": 30.643769579516498, "lon": 76.74222345052716, "elevation": 0.0, "name": "Turn Left" },
+        { "lat": 30.646445635217244, "lon": 76.74038256638961, "elevation": 0.0, "name": "Manav Rachna School" }
       ]
     }
   ]

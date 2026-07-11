@@ -134,9 +134,12 @@ final class GPXReplayProvider: LocationProviding {
         self.cadenceMultiplier = cadenceMultiplier
     }
     
-    /// Create provider from route waypoints
+    /// Create provider from route waypoints with densification for realistic GPS simulation
     static func fromRoute(_ route: Route, cadenceMultiplier: Double = 1.0) -> GPXReplayProvider {
-        let locations = route.waypoints.map { waypoint in
+        // Densify the route - add interpolated points every ~10 meters
+        let densified = densifyWaypoints(route.waypoints, targetSpacing: 10.0)
+
+        let locations = densified.map { waypoint in
             CLLocation(
                 coordinate: waypoint.coordinate,
                 altitude: waypoint.elevation ?? 0.0,
@@ -146,5 +149,69 @@ final class GPXReplayProvider: LocationProviding {
             )
         }
         return GPXReplayProvider(locations: locations, cadenceMultiplier: cadenceMultiplier)
+    }
+
+    /// Densify waypoints by interpolating points between them
+    private static func densifyWaypoints(_ waypoints: [Waypoint], targetSpacing: Double) -> [Waypoint] {
+        guard waypoints.count >= 2 else { return waypoints }
+
+        var result: [Waypoint] = []
+
+        for i in 0..<waypoints.count - 1 {
+            let start = waypoints[i]
+            let end = waypoints[i + 1]
+
+            result.append(start)
+
+            // Calculate distance between waypoints using Haversine
+            let distance = haversineDistance(
+                lat1: start.lat, lon1: start.lon,
+                lat2: end.lat, lon2: end.lon
+            )
+
+            // Calculate how many intermediate points we need
+            let numIntermediatePoints = max(0, Int((distance / targetSpacing).rounded()) - 1)
+
+            // Interpolate intermediate points
+            for j in 1...numIntermediatePoints {
+                let fraction = Double(j) / Double(numIntermediatePoints + 1)
+
+                let interpLat = start.lat + (end.lat - start.lat) * fraction
+                let interpLon = start.lon + (end.lon - start.lon) * fraction
+                let interpElevation: Double?
+                if let startElev = start.elevation, let endElev = end.elevation {
+                    interpElevation = startElev + (endElev - startElev) * fraction
+                } else {
+                    interpElevation = start.elevation ?? end.elevation
+                }
+
+                result.append(Waypoint(
+                    lat: interpLat,
+                    lon: interpLon,
+                    elevation: interpElevation
+                ))
+            }
+        }
+
+        // Add the final waypoint
+        result.append(waypoints.last!)
+
+        return result
+    }
+
+    /// Haversine distance formula (meters)
+    private static func haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
+        let R = 6371000.0 // Earth radius in meters
+        let lat1Rad = lat1 * .pi / 180
+        let lat2Rad = lat2 * .pi / 180
+        let deltaLat = (lat2 - lat1) * .pi / 180
+        let deltaLon = (lon2 - lon1) * .pi / 180
+
+        let a = sin(deltaLat / 2) * sin(deltaLat / 2) +
+                cos(lat1Rad) * cos(lat2Rad) *
+                sin(deltaLon / 2) * sin(deltaLon / 2)
+        let c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return R * c
     }
 }
