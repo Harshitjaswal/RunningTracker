@@ -27,6 +27,13 @@ struct RouteListView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
+                
+                Button("🏃 Run Session Integration Test") {
+                    Task {
+                        await runSessionTests()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
             }
             .navigationTitle("Routes")
         }

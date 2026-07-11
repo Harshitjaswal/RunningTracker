@@ -92,28 +92,33 @@ final class GPXReplayProvider: LocationProviding {
         AsyncStream { continuation in
             Task {
                 var index = 0
-                let baseTimestamp = Date()
+                var lastTimestamp = Date()
                 
                 while !Task.isCancelled {
                     let location = self.locations[index]
                     
-                    // Create new location with strictly increasing timestamp
-                    let adjustedTimestamp = baseTimestamp.addingTimeInterval(
-                        TimeInterval(index) / self.cadenceMultiplier
-                    )
+                    // Wait first (so timestamp advances)
+                    if index > 0 {
+                        try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 / self.cadenceMultiplier))
+                    }
+                    
+                    // Use current timestamp, ensuring it's after lastTimestamp
+                    var currentTimestamp = Date()
+                    if currentTimestamp <= lastTimestamp {
+                        // Ensure strictly increasing
+                        currentTimestamp = lastTimestamp.addingTimeInterval(0.001)
+                    }
                     
                     let adjustedLocation = CLLocation(
                         coordinate: location.coordinate,
                         altitude: location.altitude,
                         horizontalAccuracy: location.horizontalAccuracy,
                         verticalAccuracy: location.verticalAccuracy,
-                        timestamp: adjustedTimestamp
+                        timestamp: currentTimestamp
                     )
                     
                     continuation.yield(adjustedLocation)
-                    
-                    // Wait before emitting next fix
-                    try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 / self.cadenceMultiplier))
+                    lastTimestamp = currentTimestamp
                     
                     // Loop back to start when finished
                     index = (index + 1) % self.locations.count
