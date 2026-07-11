@@ -41,7 +41,9 @@ struct HUDOverlayView: View {
                 }
                 
                 Divider()
+                .opacity(0.3)
                     .frame(height: 40)
+                    .opacity(0.3)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Distance Remaining")
@@ -56,6 +58,7 @@ struct HUDOverlayView: View {
             // Next Waypoint
             if let nextWaypoint = session.nextWaypoint {
                 Divider()
+                .opacity(0.3)
 
                 HStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 4) {
@@ -68,6 +71,7 @@ struct HUDOverlayView: View {
                     }
 
                     Divider()
+                .opacity(0.3)
                         .frame(height: 40)
 
                     VStack(alignment: .leading, spacing: 4) {
@@ -79,6 +83,7 @@ struct HUDOverlayView: View {
                     }
 
                     Divider()
+                .opacity(0.3)
                         .frame(height: 40)
 
                     VStack(alignment: .leading, spacing: 4) {
@@ -92,6 +97,7 @@ struct HUDOverlayView: View {
             }
 
             Divider()
+                .opacity(0.3)
 
             // ETA and Verdict
             HStack(spacing: 20) {
@@ -120,6 +126,7 @@ struct HUDOverlayView: View {
             }
             
             Divider()
+                .opacity(0.3)
             
             // Trust State and Off-Route Status
             statusChips
@@ -143,6 +150,7 @@ struct HUDOverlayView: View {
             }
             
             Divider()
+                .opacity(0.3)
                 .frame(height: 80)
 
             // Center: Next Waypoint
@@ -154,6 +162,7 @@ struct HUDOverlayView: View {
                 }
 
                 Divider()
+                .opacity(0.3)
                     .frame(height: 80)
             }
 
@@ -164,6 +173,7 @@ struct HUDOverlayView: View {
             }
 
             Divider()
+                .opacity(0.3)
                 .frame(height: 80)
             
             // Right: Verdict & Status
