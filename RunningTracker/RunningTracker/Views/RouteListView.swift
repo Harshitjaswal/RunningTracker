@@ -87,43 +87,55 @@ struct RouteListView: View {
             }
             .navigationTitle("Routes")
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu {
-                        Button {
-                            selectedColorScheme = "system"
-                        } label: {
-                            Label("System", systemImage: selectedColorScheme == "system" ? "checkmark" : "")
-                        }
-
-                        Button {
-                            selectedColorScheme = "light"
-                        } label: {
-                            Label("Light", systemImage: selectedColorScheme == "light" ? "checkmark" : "sun.max")
-                        }
-
-                        Button {
-                            selectedColorScheme = "dark"
-                        } label: {
-                            Label("Dark", systemImage: selectedColorScheme == "dark" ? "checkmark" : "moon")
-                        }
-                    } label: {
-                        Image(systemName: selectedColorScheme == "light" ? "sun.max" : selectedColorScheme == "dark" ? "moon.fill" : "circle.lefthalf.filled")
-                    }
-                }
-
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button("🧮 Route Projector Tests") {
-                            Task { await runRouteProjectorTests() }
+                        // Theme Section
+                        Section("Theme") {
+                            Button {
+                                selectedColorScheme = "system"
+                            } label: {
+                                if selectedColorScheme == "system" {
+                                    Label("System", systemImage: "checkmark")
+                                } else {
+                                    Label("System", systemImage: "circle.lefthalf.filled")
+                                }
+                            }
+
+                            Button {
+                                selectedColorScheme = "light"
+                            } label: {
+                                if selectedColorScheme == "light" {
+                                    Label("Light", systemImage: "checkmark")
+                                } else {
+                                    Label("Light", systemImage: "sun.max")
+                                }
+                            }
+
+                            Button {
+                                selectedColorScheme = "dark"
+                            } label: {
+                                if selectedColorScheme == "dark" {
+                                    Label("Dark", systemImage: "checkmark")
+                                } else {
+                                    Label("Dark", systemImage: "moon.fill")
+                                }
+                            }
                         }
-                        Button("⏱️ ETA Engine Tests") {
-                            Task { await runETAEngineTests() }
-                        }
-                        Button("🏃 Run Session Tests") {
-                            Task { await runSessionTests() }
+
+                        // Tests Section
+                        Section("Tests") {
+                            Button("🧮 Route Projector Tests") {
+                                Task { await runRouteProjectorTests() }
+                            }
+                            Button("⏱️ ETA Engine Tests") {
+                                Task { await runETAEngineTests() }
+                            }
+                            Button("🏃 Run Session Tests") {
+                                Task { await runSessionTests() }
+                            }
                         }
                     } label: {
-                        Image(systemName: "testtube.2")
+                        Image(systemName: "ellipsis.circle")
                     }
                 }
             }
