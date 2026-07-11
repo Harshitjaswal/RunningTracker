@@ -20,6 +20,13 @@ struct RouteListView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
+                
+                Button("⏱️ Run ETA Engine Tests") {
+                    Task {
+                        await runETAEngineTests()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
             }
             .navigationTitle("Routes")
         }
