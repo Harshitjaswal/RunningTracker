@@ -52,7 +52,7 @@ actor ETAEngine {
     // MARK: - State
     
     private var paceBuffer: [Double] = []  // Ring buffer of pace samples (seconds/meter)
-    private let bufferSize: Int = 10
+    private let bufferSize: Int = 5  // Reduced to 5 for faster ETA display (~10 seconds)
     private var lastLocation: CLLocation?
     private var currentResult: ETAResult = .notReady
     private var sessionStartTime: Date?
@@ -145,8 +145,8 @@ actor ETAEngine {
             return
         }
         
-        // Calculate ETA if buffer is full
-        if paceBuffer.count == bufferSize {
+        // Calculate ETA if we have at least 3 samples (minimum for reasonable accuracy)
+        if paceBuffer.count >= 3 {
             let medianPace = calculateMedianPace()
             
             // Check if stalled (pace implies very slow speed)
@@ -163,7 +163,19 @@ actor ETAEngine {
             } else {
                 // Calculate ETA
                 let etaSeconds = distanceRemaining * medianPace
-                
+
+                // Don't show ETA if distance is effectively zero but still > 0
+                // This prevents showing "0:00" when very close to finish
+                if distanceRemaining < 1.0 {
+                    currentResult = ETAResult(
+                        etaSeconds: nil,
+                        projectedFinishTime: nil,
+                        verdict: .onPace,
+                        isReady: false
+                    )
+                    return
+                }
+
                 // Calculate projected finish time
                 let projectedFinishTime = Date().addingTimeInterval(etaSeconds)
                 
