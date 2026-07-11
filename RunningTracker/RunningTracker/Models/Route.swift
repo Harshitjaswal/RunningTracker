@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-struct Route: Codable, Identifiable {
+struct Route: Codable, Identifiable, Sendable {
     let id: String
     let name: String
     let targetFinishSeconds: TimeInterval
@@ -27,11 +27,11 @@ struct Route: Codable, Identifiable {
 
     var isValid: Bool { waypoints.count >= 2 }
 
-    var coordinates: [CLLocationCoordinate2D] {
+    nonisolated var coordinates: [CLLocationCoordinate2D] {
         waypoints.map { $0.coordinate }
     }
 }
 
-struct RoutesContainer: Codable {
+struct RoutesContainer: Codable, Sendable {
     let routes: [Route]
 }

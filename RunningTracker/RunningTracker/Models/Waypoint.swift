@@ -8,13 +8,13 @@
 import Foundation
 import CoreLocation
 
-struct Waypoint: Codable, Identifiable {
+struct Waypoint: Codable, Identifiable, Sendable {
     let id: UUID
     let lat: Double
     let lon: Double
     let elevation: Double?
 
-    var coordinate: CLLocationCoordinate2D {
+    nonisolated var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: lat, longitude: lon)
     }
 

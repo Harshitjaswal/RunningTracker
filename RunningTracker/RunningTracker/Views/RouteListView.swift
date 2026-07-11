@@ -10,8 +10,18 @@ import SwiftUI
 struct RouteListView: View {
     var body: some View {
         NavigationStack {
-            Text("Route List - Coming in Step 6")
-                .navigationTitle("Routes")
+            VStack(spacing: 20) {
+                Text("Route List - Coming in Step 6")
+                    .font(.headline)
+                
+                Button("🧮 Run RouteProjector Math Tests") {
+                    Task {
+                        await runRouteProjectorTests()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .navigationTitle("Routes")
         }
     }
 }
