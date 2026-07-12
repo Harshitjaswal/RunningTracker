@@ -10,6 +10,7 @@ import SwiftUI
 struct RouteListView: View {
     @State private var routes: [Route] = []
     @State private var loadError: String?
+    @State private var showLocationPermissionAlert = false
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @AppStorage("selectedColorScheme") private var selectedColorScheme: String = "system"
 
@@ -149,6 +150,25 @@ struct RouteListView: View {
             if routes.isEmpty && loadError == nil {
                 loadRoutes()
             }
+
+            // Listen for location permission denied notification
+            NotificationCenter.default.addObserver(
+                forName: NSNotification.Name("LocationPermissionDenied"),
+                object: nil,
+                queue: .main
+            ) { _ in
+                showLocationPermissionAlert = true
+            }
+        }
+        .alert("Location Permission Required", isPresented: $showLocationPermissionAlert) {
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("RunTracker needs access to your location to track your runs. Please enable location access in Settings.")
         }
     }
     
