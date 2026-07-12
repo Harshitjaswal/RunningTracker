@@ -56,9 +56,14 @@ struct RouteListView: View {
                     ScrollView {
                         VStack(spacing: 0) {
                             // Hero header
-                            VStack(spacing: 8) {
-                                Text("🏃")
-                                    .font(.system(size: horizontalSizeClass == .regular ? 80 : 60))
+                            VStack(spacing: 12) {
+                                Image("AppLogo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: horizontalSizeClass == .regular ? 100 : 80, height: horizontalSizeClass == .regular ? 100 : 80)
+                                    .clipShape(RoundedRectangle(cornerRadius: horizontalSizeClass == .regular ? 22 : 18))
+                                    .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 4)
+
                                 Text("Choose Your Route")
                                     .font(horizontalSizeClass == .regular ? .largeTitle : .title)
                                     .fontWeight(.bold)
@@ -85,7 +90,6 @@ struct RouteListView: View {
                     }
                 }
             }
-            .navigationTitle("Routes")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
