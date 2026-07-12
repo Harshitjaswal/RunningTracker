@@ -11,6 +11,15 @@ struct RouteListView: View {
     @State private var routes: [Route] = []
     @State private var loadError: String?
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @AppStorage("selectedColorScheme") private var selectedColorScheme: String = "system"
+
+    private var colorScheme: ColorScheme? {
+        switch selectedColorScheme {
+        case "light": return .light
+        case "dark": return .dark
+        default: return nil
+        }
+    }
     
     // Grid columns for iPad
     private var gridColumns: [GridItem] {
@@ -47,9 +56,14 @@ struct RouteListView: View {
                     ScrollView {
                         VStack(spacing: 0) {
                             // Hero header
-                            VStack(spacing: 8) {
-                                Text("🏃")
-                                    .font(.system(size: horizontalSizeClass == .regular ? 80 : 60))
+                            VStack(spacing: 12) {
+                                Image("AppLogo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: horizontalSizeClass == .regular ? 100 : 80, height: horizontalSizeClass == .regular ? 100 : 80)
+                                    .clipShape(RoundedRectangle(cornerRadius: horizontalSizeClass == .regular ? 22 : 18))
+                                    .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 4)
+
                                 Text("Choose Your Route")
                                     .font(horizontalSizeClass == .regular ? .largeTitle : .title)
                                     .fontWeight(.bold)
@@ -76,24 +90,60 @@ struct RouteListView: View {
                     }
                 }
             }
-            .navigationTitle("Routes")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button("🧮 Route Projector Tests") {
-                            Task { await runRouteProjectorTests() }
+                        // Theme Section
+                        Section("Theme") {
+                            Button {
+                                selectedColorScheme = "system"
+                            } label: {
+                                if selectedColorScheme == "system" {
+                                    Label("System", systemImage: "checkmark")
+                                } else {
+                                    Label("System", systemImage: "circle.lefthalf.filled")
+                                }
+                            }
+
+                            Button {
+                                selectedColorScheme = "light"
+                            } label: {
+                                if selectedColorScheme == "light" {
+                                    Label("Light", systemImage: "checkmark")
+                                } else {
+                                    Label("Light", systemImage: "sun.max")
+                                }
+                            }
+
+                            Button {
+                                selectedColorScheme = "dark"
+                            } label: {
+                                if selectedColorScheme == "dark" {
+                                    Label("Dark", systemImage: "checkmark")
+                                } else {
+                                    Label("Dark", systemImage: "moon.fill")
+                                }
+                            }
                         }
-                        Button("⏱️ ETA Engine Tests") {
-                            Task { await runETAEngineTests() }
-                        }
-                        Button("🏃 Run Session Tests") {
-                            Task { await runSessionTests() }
+
+                        // Tests Section
+                        Section("Tests") {
+                            Button("🧮 Route Projector Tests") {
+                                Task { await runRouteProjectorTests() }
+                            }
+                            Button("⏱️ ETA Engine Tests") {
+                                Task { await runETAEngineTests() }
+                            }
+                            Button("🏃 Run Session Tests") {
+                                Task { await runSessionTests() }
+                            }
                         }
                     } label: {
-                        Image(systemName: "testtube.2")
+                        Image(systemName: "ellipsis.circle")
                     }
                 }
             }
+            .preferredColorScheme(colorScheme)
         }
         .onAppear {
             if routes.isEmpty && loadError == nil {
