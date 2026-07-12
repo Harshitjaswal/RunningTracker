@@ -1,6 +1,29 @@
 {
   "routes": [
     {
+      "id": "zscaler-cp67-round-trip",
+      "name": "Zscaler-cp67-Zscaler Round Trip",
+      "targetFinishSeconds": 1200,
+      "distanceMeters": 1700,
+      "waypoints": [
+        { "lat": 30.68097300507892, "lon": 76.72553238693787, "elevation": 0.0, "name": "Zscaler Office" },
+        { "lat": 30.681247159633536, "lon": 76.72532353321176, "elevation": 0.0 },
+        { "lat": 30.680944644218496, "lon": 76.7253125409104, "elevation": 0.0 },
+        { "lat": 30.681123818455813, "lon": 76.72512278405094, "elevation": 0.0, "name": "Checkpoint A" },
+        { "lat": 30.68094003630802, "lon": 76.72490196600127, "elevation": 0.0 },
+        { "lat": 30.680639858047762, "lon": 76.72480224172078, "elevation": 0.0 },
+        { "lat": 30.67853245783957, "lon": 76.72658303247181, "elevation": 0.0, "name": "Checkpoint B" },
+        { "lat": 30.676694571281416, "lon": 76.72379075256603, "elevation": 0.0, "name": "CP67 Mall" },
+        { "lat": 30.67873258897868, "lon": 76.72204138042083, "elevation": 0.0, "name": "Checkpoint C" },
+        { "lat": 30.679309199887392, "lon": 76.72209968018238, "elevation": 0.0 },
+        { "lat": 30.681236409508806, "lon": 76.7251114594336, "elevation": 0.0, "name": "Checkpoint D" },
+        { "lat": 30.681084350937986, "lon": 76.72509065188693, "elevation": 0.0 },
+        { "lat": 30.680940240717252, "lon": 76.72530444279364, "elevation": 0.0 },
+        { "lat": 30.68123343025034, "lon": 76.72532755532409, "elevation": 0.0, "name": "Checkpoint E" },
+        { "lat": 30.680994903240087, "lon": 76.72553556809818, "elevation": 0.0, "name": "Zscaler Office" }
+      ]
+    },
+    {
       "id": "home-to-jay-pee",
       "name": "Home to Jaypee Enterprise",
       "targetFinishSeconds": 600,
