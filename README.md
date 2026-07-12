@@ -241,7 +241,8 @@ Located in `Utilities/` folder, accessible via debug menu:
 
 ### Test Routes
 
-3 pre-configured routes in `Resources/routes.json`:
+4 pre-configured routes in `Resources/routes.json`:
+- Zscaler-cp67-Zscaler Round Trip (1.7 km , 20 min target)
 - Home to Jaypee Enterprise (2.0 km, 10 min target)
 - Jaypee to Rudra School (4.0 km, 20 min target)
 - McDonald's to Manav Rachna (6.0 km, 30 min target)
