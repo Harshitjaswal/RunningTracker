@@ -122,14 +122,13 @@ struct ActiveRunView: View {
                     MapCompass()
                 }
                 .ignoresSafeArea()
-                
+
                 // HUD Overlay
                 HUDOverlayView(session: session)
-                
-                // Stop button
+
+                // Stop button - positioned on top-left to avoid map controls on top-right
                 VStack {
                     HStack {
-                        Spacer()
                         Button(action: stopRun) {
                             Image(systemName: "xmark.circle.fill")
                                 .font(isIPad ? .largeTitle : .title)
@@ -141,6 +140,8 @@ struct ActiveRunView: View {
                                 )
                         }
                         .padding(isIPad ? 24 : 16)
+
+                        Spacer()
                     }
                     Spacer()
                 }
