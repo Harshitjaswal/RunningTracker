@@ -10,7 +10,17 @@ import SwiftUI
 struct RouteListView: View {
     @State private var routes: [Route] = []
     @State private var loadError: String?
+    @State private var showLocationPermissionAlert = false
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @AppStorage("selectedColorScheme") private var selectedColorScheme: String = "system"
+
+    private var colorScheme: ColorScheme? {
+        switch selectedColorScheme {
+        case "light": return .light
+        case "dark": return .dark
+        default: return nil
+        }
+    }
     
     // Grid columns for iPad
     private var gridColumns: [GridItem] {
@@ -22,6 +32,22 @@ struct RouteListView: View {
         } else {
             // iPhone: single column
             return [GridItem(.flexible())]
+        }
+    }
+
+    // Time-based greeting
+    private var timeBasedGreeting: (text: String, icon: String, gradient: [Color]) {
+        let hour = Calendar.current.component(.hour, from: Date())
+
+        switch hour {
+        case 5..<12:
+            return ("Morning Run", "sunrise.fill", [.orange, .yellow])
+        case 12..<17:
+            return ("Afternoon Run", "sun.max.fill", [.yellow, .orange])
+        case 17..<21:
+            return ("Evening Run", "sunset.fill", [.orange, .red])
+        default:
+            return ("Night Run", "moon.stars.fill", [.indigo, .purple])
         }
     }
     
@@ -47,18 +73,48 @@ struct RouteListView: View {
                     ScrollView {
                         VStack(spacing: 0) {
                             // Hero header
-                            VStack(spacing: 8) {
-                                Text("🏃")
-                                    .font(.system(size: horizontalSizeClass == .regular ? 80 : 60))
-                                Text("Choose Your Route")
-                                    .font(horizontalSizeClass == .regular ? .largeTitle : .title)
-                                    .fontWeight(.bold)
-                                Text("\(routes.count) routes available")
-                                    .font(horizontalSizeClass == .regular ? .title3 : .subheadline)
-                                    .foregroundStyle(.secondary)
+                            VStack(spacing: 14) {
+                                Image("AppLogo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: horizontalSizeClass == .regular ? 120 : 100, height: horizontalSizeClass == .regular ? 120 : 100)
+                                    .clipShape(RoundedRectangle(cornerRadius: horizontalSizeClass == .regular ? 26 : 22))
+                                    .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 4)
+
+                                // Time-based greeting
+                                HStack(spacing: 8) {
+                                    Image(systemName: timeBasedGreeting.icon)
+                                        .font(horizontalSizeClass == .regular ? .title2 : .title3)
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: timeBasedGreeting.gradient,
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
+                                        )
+                                    Text(timeBasedGreeting.text)
+                                        .font(horizontalSizeClass == .regular ? .title.bold() : .title2.bold())
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: timeBasedGreeting.gradient,
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
+                                        )
+                                }
+
+                                // Heading and subheading grouped together
+                                VStack(spacing: 4) {
+                                    Text("Choose Your Route")
+                                        .font(horizontalSizeClass == .regular ? .title2 : .title3)
+                                        .fontWeight(.semibold)
+                                    Text("\(routes.count) routes available")
+                                        .font(horizontalSizeClass == .regular ? .title3 : .subheadline)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
-                            .padding(.top, horizontalSizeClass == .regular ? 40 : 24)
-                            .padding(.bottom, horizontalSizeClass == .regular ? 32 : 20)
+                            .padding(.top, horizontalSizeClass == .regular ? 20 : 16)
+                            .padding(.bottom, horizontalSizeClass == .regular ? 28 : 16)
 
                             LazyVGrid(columns: gridColumns, spacing: horizontalSizeClass == .regular ? 24 : 16) {
                                 ForEach(routes) { route in
@@ -76,29 +132,84 @@ struct RouteListView: View {
                     }
                 }
             }
-            .navigationTitle("Routes")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button("🧮 Route Projector Tests") {
-                            Task { await runRouteProjectorTests() }
+                        // Theme Section
+                        Section("Theme") {
+                            Button {
+                                selectedColorScheme = "system"
+                            } label: {
+                                if selectedColorScheme == "system" {
+                                    Label("System", systemImage: "checkmark")
+                                } else {
+                                    Label("System", systemImage: "circle.lefthalf.filled")
+                                }
+                            }
+
+                            Button {
+                                selectedColorScheme = "light"
+                            } label: {
+                                if selectedColorScheme == "light" {
+                                    Label("Light", systemImage: "checkmark")
+                                } else {
+                                    Label("Light", systemImage: "sun.max")
+                                }
+                            }
+
+                            Button {
+                                selectedColorScheme = "dark"
+                            } label: {
+                                if selectedColorScheme == "dark" {
+                                    Label("Dark", systemImage: "checkmark")
+                                } else {
+                                    Label("Dark", systemImage: "moon.fill")
+                                }
+                            }
                         }
-                        Button("⏱️ ETA Engine Tests") {
-                            Task { await runETAEngineTests() }
-                        }
-                        Button("🏃 Run Session Tests") {
-                            Task { await runSessionTests() }
+
+                        // Tests Section
+                        Section("Tests") {
+                            Button("🧮 Route Projector Tests") {
+                                Task { await runRouteProjectorTests() }
+                            }
+                            Button("⏱️ ETA Engine Tests") {
+                                Task { await runETAEngineTests() }
+                            }
+                            Button("🏃 Run Session Tests") {
+                                Task { await runSessionTests() }
+                            }
                         }
                     } label: {
-                        Image(systemName: "testtube.2")
+                        Image(systemName: "ellipsis.circle")
                     }
                 }
             }
+            .preferredColorScheme(colorScheme)
         }
         .onAppear {
             if routes.isEmpty && loadError == nil {
                 loadRoutes()
             }
+
+            // Listen for location permission denied notification
+            NotificationCenter.default.addObserver(
+                forName: NSNotification.Name("LocationPermissionDenied"),
+                object: nil,
+                queue: .main
+            ) { _ in
+                showLocationPermissionAlert = true
+            }
+        }
+        .alert("Location Permission Required", isPresented: $showLocationPermissionAlert) {
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("RunTracker needs access to your location to track your runs. Please enable location access in Settings.")
         }
     }
     

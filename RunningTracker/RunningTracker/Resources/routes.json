@@ -1,46 +1,73 @@
 {
   "routes": [
     {
+      "id": "zscaler-cp67-round-trip",
+      "name": "Zscaler-cp67-Zscaler Round Trip",
+      "targetFinishSeconds": 1200,
+      "distanceMeters": 1700,
+      "waypoints": [
+        { "lat": 30.68097300507892, "lon": 76.72553238693787, "elevation": 0.0, "name": "Zscaler Office" },
+        { "lat": 30.681247159633536, "lon": 76.72532353321176, "elevation": 0.0 },
+        { "lat": 30.680944644218496, "lon": 76.7253125409104, "elevation": 0.0 },
+        { "lat": 30.681123818455813, "lon": 76.72512278405094, "elevation": 0.0, "name": "Checkpoint A" },
+        { "lat": 30.68094003630802, "lon": 76.72490196600127, "elevation": 0.0 },
+        { "lat": 30.680639858047762, "lon": 76.72480224172078, "elevation": 0.0 },
+        { "lat": 30.67853245783957, "lon": 76.72658303247181, "elevation": 0.0, "name": "Checkpoint B" },
+        { "lat": 30.676694571281416, "lon": 76.72379075256603, "elevation": 0.0, "name": "CP67 Mall" },
+        { "lat": 30.67873258897868, "lon": 76.72204138042083, "elevation": 0.0, "name": "Checkpoint C" },
+        { "lat": 30.679309199887392, "lon": 76.72209968018238, "elevation": 0.0 },
+        { "lat": 30.681236409508806, "lon": 76.7251114594336, "elevation": 0.0, "name": "Checkpoint D" },
+        { "lat": 30.681084350937986, "lon": 76.72509065188693, "elevation": 0.0 },
+        { "lat": 30.680940240717252, "lon": 76.72530444279364, "elevation": 0.0 },
+        { "lat": 30.68123343025034, "lon": 76.72532755532409, "elevation": 0.0, "name": "Checkpoint E" },
+        { "lat": 30.680994903240087, "lon": 76.72553556809818, "elevation": 0.0, "name": "Zscaler Office" }
+      ]
+    },
+    {
       "id": "home-to-jay-pee",
-      "name": "Home to Jay Pee",
+      "name": "Home to Jaypee Enterprise",
       "targetFinishSeconds": 600,
       "distanceMeters": 2000,
       "waypoints": [
-        { "lat": 30.633278444416835, "lon": 76.76958577250777, "elevation": 0.0, "name": "Home" },
-        { "lat": 30.63176921249922, "lon": 76.76938503711773, "elevation": 0.0 },
-        { "lat": 30.630321372068437, "lon": 76.77145586183637, "elevation": 0.0 },
-        { "lat": 30.62801015717802, "lon": 76.77603148312053, "elevation": 0.0, "name": "Jay Pee Enterprises" }
+        { "lat": 30.63318969796735, "lon": 76.76972187095954, "elevation": 0.0, "name": "Start-Home" },
+        { "lat": 30.63245344275299, "lon": 76.76899385722942, "elevation": 0.0 , "name" :"Checkpoint A"},
+        { "lat": 30.632990881839465, "lon": 76.76827182404755, "elevation": 0.0 },
+        { "lat": 30.6327801584573, "lon": 76.76802942229351, "elevation": 0.0 },
+        { "lat": 30.630270733406526, "lon": 76.7714967568507, "elevation": 0.0, "name": "Checkpoint B" },
+        { "lat": 30.62913262193483, "lon": 76.77314678396625, "elevation": 0.0 },
+        { "lat": 30.628581946335615, "lon": 76.77437337238202, "elevation": 0.0 ,"name": "Checkpoint C" },
+        { "lat": 30.627980599516015, "lon": 76.77602409098348, "elevation": 0.0, "name": "Jaypee Enterprise" }
       ]
     },
     {
       "id": "jay-pee-to-rudra",
-      "name": "Jay Pee to Rudra School",
+      "name": "Jaypee Enterprise to Rudra School",
       "targetFinishSeconds": 1200,
       "distanceMeters": 4000,
       "waypoints": [
-        { "lat": 30.62801015717802, "lon": 76.77603148312053, "elevation": 0.0, "name": "Jay Pee Enterprises" },
+        { "lat": 30.62801015717802, "lon": 76.77603148312053, "elevation": 0.0, "name": "Jaypee Enterprise" },
         { "lat": 30.63153207939876, "lon": 76.76980288102355, "elevation": 0.0 },
-        { "lat": 30.633821527028672, "lon": 76.7666056878607, "elevation": 0.0 },
+        { "lat": 30.633821527028672, "lon": 76.7666056878607, "elevation": 0.0,"name" :"Checkpoint A" },
         { "lat": 30.63306453824258, "lon": 76.76561863493795, "elevation": 0.0, "name": "Turn Right" },
         { "lat": 30.63568880463868, "lon": 76.76227844792157, "elevation": 0.0 },
-        { "lat": 30.63663648289464, "lon": 76.76280754761382, "elevation": 0.0, "name": "Turn Left" },
+        { "lat": 30.63663648289464, "lon": 76.76280754761382, "elevation": 0.0,"name" :"Checkpoint B" },
         { "lat": 30.63950762470619, "lon": 76.75945561577639, "elevation": 0.0, "name": "Rudra School" }
       ]
     },
     {
       "id": "mcdonalds-to-manav-rachna",
-      "name": "McDonald's to Manav Rachna",
+      "name": "McDonald's to Manav Rachna Institute",
       "targetFinishSeconds": 1800,
       "distanceMeters": 6000,
       "waypoints": [
         { "lat": 30.632663955186217, "lon": 76.7667028796139, "elevation": 0.0, "name": "McDonald's" },
         { "lat": 30.633020334761635, "lon": 76.76572879409287, "elevation": 0.0 },
-        { "lat": 30.63272068253268, "lon": 76.76534019038723, "elevation": 0.0, "name": "Turn Left" },
+        { "lat": 30.63272068253268, "lon": 76.76534019038723, "elevation": 0.0, "name" :"Checkpoint A"},
         { "lat": 30.64154572747629, "lon": 76.75447187945987, "elevation": 0.0 },
-        { "lat": 30.640820371139625, "lon": 76.7502852534744, "elevation": 0.0, "name": "Turn Left" },
+        { "lat": 30.640820371139625, "lon": 76.7502852534744, "elevation": 0.0, "name" :"Checkpoint B" },
         { "lat": 30.645353376528337, "lon": 76.74558782498546, "elevation": 0.0 },
-        { "lat": 30.643769579516498, "lon": 76.74222345052716, "elevation": 0.0, "name": "Turn Left" },
-        { "lat": 30.646445635217244, "lon": 76.74038256638961, "elevation": 0.0, "name": "Manav Rachna School" }
+        { "lat": 30.643769579516498, "lon": 76.74222345052716, "elevation": 0.0, "name" :"Checkpoint C" },
+        { "lat": 30.646445635217244, "lon": 76.74038256638961, "elevation": 0.0, "name": "Manav Rachna Institute" }
       ]
     }
   ]

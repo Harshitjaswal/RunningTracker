@@ -104,10 +104,12 @@ struct ActiveRunView: View {
 
                                 if let name = waypoint.name {
                                     Text(name)
-                                        .font(.caption2)
-                                        .padding(4)
-                                        .background(.white)
-                                        .cornerRadius(4)
+                                        .font(.caption2.bold())
+                                        .foregroundStyle(.primary)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(.ultraThinMaterial)
+                                        .cornerRadius(6)
                                         .offset(y: isIPad ? -20 : -15)
                                 }
                             }
@@ -118,17 +120,15 @@ struct ActiveRunView: View {
                 .mapControls {
                     MapUserLocationButton()
                     MapCompass()
-                    MapScaleView()
                 }
                 .ignoresSafeArea()
-                
+
                 // HUD Overlay
                 HUDOverlayView(session: session)
-                
-                // Stop button
+
+                // Stop button - positioned on top-left to avoid map controls on top-right
                 VStack {
                     HStack {
-                        Spacer()
                         Button(action: stopRun) {
                             Image(systemName: "xmark.circle.fill")
                                 .font(isIPad ? .largeTitle : .title)
@@ -140,34 +140,16 @@ struct ActiveRunView: View {
                                 )
                         }
                         .padding(isIPad ? 24 : 16)
+
+                        Spacer()
                     }
                     Spacer()
                 }
                 
                 // Finish overlay
-                if session.isFinished {
-                    ZStack {
-                        Color.black.opacity(0.8)
-                            .ignoresSafeArea()
-                        
-                        VStack(spacing: isIPad ? 32 : 20) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: isIPad ? 120 : 80))
-                                .foregroundStyle(.green)
-                            
-                            Text("Run Complete!")
-                                .font(isIPad ? .system(size: 48, weight: .bold) : .largeTitle.bold())
-                            
-                            Text("Final Progress: \(Int(session.progress * 100))%")
-                                .font(isIPad ? .title : .title3)
-                            
-                            Button("Done") {
-                                dismiss()
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(isIPad ? .extraLarge : .large)
-                        }
-                        .foregroundStyle(.white)
+                if session.isFinished, let summary = session.runSummary {
+                    RunSummaryView(summary: summary, isIPad: isIPad) {
+                        dismiss()
                     }
                 }
             }

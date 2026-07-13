@@ -27,8 +27,13 @@ final class RunSession: ObservableObject {
     @Published var nextWaypoint: Waypoint?
     @Published var distanceToNextWaypoint: Double = 0.0
     @Published var waypointProgress: Double = 0.0
-    
+    @Published var runSummary: RunSummary?
+
     // MARK: - Private State
+
+    private var startTime: Date?
+    private var totalDistanceCovered: Double = 0.0
+    private var lastLocationForDistance: CLLocation?
     
     private let route: Route
     private let provider: any LocationProviding
@@ -57,6 +62,11 @@ final class RunSession: ObservableObject {
     // MARK: - Public API
     
     func start() {
+        // Record start time
+        startTime = Date()
+        totalDistanceCovered = 0.0
+        lastLocationForDistance = nil
+
         // Reset actors
         Task {
             await integrityGate.reset()
@@ -104,7 +114,14 @@ final class RunSession: ObservableObject {
         
         // Update user location
         userLocation = validLoc.coordinate
-        
+
+        // Track actual distance covered
+        if let lastLoc = lastLocationForDistance {
+            let distance = validLoc.distance(from: lastLoc)
+            totalDistanceCovered += distance
+        }
+        lastLocationForDistance = validLoc
+
         // 2. Project onto route
         let projection = await projector.project(fix: validLoc, onto: route)
         
@@ -150,9 +167,10 @@ final class RunSession: ObservableObject {
         // 5. Split route at foot point
         updateRouteSplit(projection: projection)
         
-        // 6. Check for finish
-        if projection.progress >= 0.98 {
+        // 6. Check for finish (within 5 meters of destination)
+        if projection.distanceRemaining <= 5.0 {
             isFinished = true
+            generateRunSummary()
             stop()
         }
     }
@@ -241,5 +259,28 @@ final class RunSession: ObservableObject {
         }
         
         return totalLength
+    }
+
+    private func generateRunSummary() {
+        guard let startTime = startTime else { return }
+
+        let endTime = Date()
+        let actualTime = endTime.timeIntervalSince(startTime)
+        let averagePace = actualTime / totalDistanceCovered
+        let beatTarget = actualTime <= route.targetFinishSeconds
+
+        runSummary = RunSummary(
+            id: UUID(),
+            routeId: route.id,
+            routeName: route.name,
+            startTime: startTime,
+            endTime: endTime,
+            totalDistance: route.distanceMeters,
+            actualDistance: totalDistanceCovered,
+            targetTime: route.targetFinishSeconds,
+            actualTime: actualTime,
+            beatTarget: beatTarget,
+            averagePace: averagePace
+        )
     }
 }
